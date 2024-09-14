@@ -1,0 +1,95 @@
+[gd_scene load_steps=8 format=3 uid="uid://chn6wr201ppqe"]
+
+[ext_resource type="Script" path="res://Scripts/ui.gd" id="1_y4k3k"]
+[ext_resource type="FontFile" uid="uid://doluglc26681y" path="res://Assets/DS-DIGIB.TTF" id="2_07nfb"]
+[ext_resource type="Texture2D" uid="uid://oneycjpo3fcb" path="res://Assets/button_smile.png" id="3_7r4f8"]
+[ext_resource type="Texture2D" uid="uid://b1djd07mf3yyk" path="res://Assets/button_smile_pressed.png" id="4_gjs54"]
+[ext_resource type="Texture2D" uid="uid://dlavydaaqpmat" path="res://Assets/button_settings.png" id="5_l00sf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwne5"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jmo7d"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_y4k3k")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 40)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="MineCountPanel" type="Panel" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwne5")
+
+[node name="MineCountLabel" type="Label" parent="PanelContainer/HBoxContainer/MineCountPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_07nfb")
+theme_override_font_sizes/font_size = 25
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameStatusButton" type="TextureButton" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+texture_normal = ExtResource("3_7r4f8")
+texture_pressed = ExtResource("4_gjs54")
+
+[node name="TimerPanel" type="Panel" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jmo7d")
+
+[node name="TimerLabel" type="Label" parent="PanelContainer/HBoxContainer/TimerPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_07nfb")
+theme_override_font_sizes/font_size = 25
+text = "000"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SettingsButton" type="TextureButton" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+action_mode = 0
+texture_normal = ExtResource("5_l00sf")
+
+[connection signal="pressed" from="PanelContainer/HBoxContainer/GameStatusButton" to="." method="_on_game_status_button_pressed"]
+[connection signal="pressed" from="PanelContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]

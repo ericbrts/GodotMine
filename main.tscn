@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://d4abhn0q3adgu"]
+
+[ext_resource type="PackedScene" uid="uid://bu7kemi4yv6xy" path="res://tile_map.tscn" id="2_ssi8n"]
+[ext_resource type="PackedScene" uid="uid://cvd50mbduboo1" path="res://game_state_manager.tscn" id="3_235vi"]
+[ext_resource type="PackedScene" uid="uid://chn6wr201ppqe" path="res://ui.tscn" id="4_jlwrc"]
+[ext_resource type="PackedScene" uid="uid://jnvk7b56yxlr" path="res://settings_window.tscn" id="4_yjxj3"]
+
+[node name="main" type="Node"]
+
+[node name="UI" parent="." instance=ExtResource("4_jlwrc")]
+
+[node name="TileMap" parent="." instance=ExtResource("2_ssi8n")]
+
+[node name="GameStateManager" parent="." node_paths=PackedStringArray("ui") instance=ExtResource("3_235vi")]
+ui = NodePath("../UI")
+
+[node name="SettingsWindow" parent="." instance=ExtResource("4_yjxj3")]

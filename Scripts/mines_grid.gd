@@ -7,6 +7,7 @@ signal game_won
 signal flag_count_changed(fc)
 
 @onready var camera_2d: Camera2D = $Camera2D
+@onready var settings_window: SettingsWindow = $"../SettingsWindow"
 
 const CELL = {
 	"1": Vector2i(0, 0),
@@ -25,9 +26,9 @@ const CELL = {
 	"unrevealed": Vector2i(3, 2)
 }
 
-@export var cols = 25
-@export var rows = 25
-@export var nbmines = 36
+@export var cols = 15
+@export var rows = 15
+@export var nbmines = 20
 
 const TILE_SET_ID = 0
 const DEFAULT_LAYER = 0
@@ -39,20 +40,36 @@ var _currently_revealed = 0
 var _revealed_to_win
 var _flag_count = 0
 var _first_reveal = true
+var _cam_offset_modifier = Vector2i(0, 0)
 
 func _ready() -> void:
 	clear_layer(DEFAULT_LAYER)
+	_load_settings()
 	for r in rows:
 		for c in cols:
-			var cell_coord = Vector2i(r - rows / 2, c - cols / 2)
+			var cell_coord = Vector2i(r - int(rows / 2), c - int(cols / 2))
 			set_tile_cell(cell_coord, "unrevealed")
 	_revealed_to_win = rows*cols - nbmines
+	if int(rows) % 2 == 1:
+		_cam_offset_modifier.x = 8
+	if int(cols) % 2 == 1:
+		_cam_offset_modifier.y = 8
+	_set_cam_offset()
 	_set_window_size()
 	
+func _load_settings():
+	var settings_filename = settings_window.settings_filename
+	if FileAccess.file_exists(settings_filename):
+		var file = FileAccess.open(settings_filename, FileAccess.READ)
+		var settings = JSON.parse_string(file.get_as_text())
+		cols = settings.cols
+		rows = settings.rows
+		nbmines = settings.mines
+	
 func _set_window_size():
-	var sz = Vector2i(rows*16*camera_2d.zoom.x, cols*16*camera_2d.zoom.y+40)
+	var sz = Vector2(rows*16*camera_2d.zoom.x, cols*16*camera_2d.zoom.y+40)
 	var win = get_window()
-	win.size.x = sz.x
+	win.size.x = max(sz.x, 240)
 	win.size.y = sz.y
 
 func _input(event: InputEvent):
@@ -76,15 +93,19 @@ func zoom_in():
 	if camera_2d.zoom.x < 4:
 		camera_2d.zoom.x += 0.25
 		camera_2d.zoom.y += 0.25
-		camera_2d.offset.y = -40 / camera_2d.zoom.y / 2 + 8
+		_set_cam_offset()
 		_set_window_size()
 		
 func zoom_out():
 	if camera_2d.zoom.x > 1:
 		camera_2d.zoom.x -= 0.25
 		camera_2d.zoom.y -= 0.25
-		camera_2d.offset.y = -40 / camera_2d.zoom.y / 2 + 8
+		_set_cam_offset()
 		_set_window_size()
+		
+func _set_cam_offset():
+	camera_2d.offset.y = -40 / camera_2d.zoom.y / 2 + _cam_offset_modifier.y
+	camera_2d.offset.x = _cam_offset_modifier.x
 			
 func on_cell_flagged(coords: Vector2i):
 	var status = get_cell_atlas_coords(DEFAULT_LAYER, coords)
@@ -107,6 +128,8 @@ func place_mines(avoid_coords):
 			rdm_coord = Vector2i(randi_range(- rows/2, rows/2 - 1), randi_range(- cols/2, cols/2 - 1))
 		mines_position.append(rdm_coord)
 		
+	print(mines_position.size())
+		
 	for coords in mines_position:
 		erase_cell(DEFAULT_LAYER, coords)
 		set_cell(DEFAULT_LAYER, coords, TILE_SET_ID, CELL.unrevealed, 1)
@@ -115,6 +138,8 @@ func set_tile_cell(cell_coord: Vector2, cell_type: String):
 	set_cell(DEFAULT_LAYER, cell_coord, TILE_SET_ID, CELL[cell_type])
 
 func on_cell_clicked(cell_coord: Vector2i):
+	print(cell_coord)
+	
 	if _first_reveal:
 		_first_reveal = false
 		place_mines(cell_coord)

@@ -23,7 +23,7 @@ func _on_game_status_button_pressed() -> void:
 	get_tree().reload_current_scene()
 	
 func _on_settings_button_pressed():
-	settings_window.show()
+	settings_window.popup()
 
 func game_lost():
 	game_status_button.texture_normal = game_lost_button_texture

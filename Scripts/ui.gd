@@ -30,3 +30,4 @@ func game_lost():
 	
 func game_won():
 	game_status_button.texture_normal = game_won_button_texture
+	mine_count_label.text = "WIN"

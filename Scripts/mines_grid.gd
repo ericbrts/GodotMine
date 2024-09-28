@@ -54,8 +54,19 @@ func _ready() -> void:
 		_cam_offset_modifier.x = 8
 	if int(cols) % 2 == 1:
 		_cam_offset_modifier.y = 8
+	_init_zoom()
 	_set_cam_offset()
 	_set_window_size()
+	
+func _init_zoom():
+	var max_size = max(rows, cols)
+	var zoom = 2
+	if max_size > 24:
+		zoom = 1
+	elif max_size > 15:
+		zoom = 1.5
+	camera_2d.zoom.x = zoom
+	camera_2d.zoom.y = zoom
 	
 func _load_settings():
 	var settings_filename = settings_window.settings_filename
@@ -128,8 +139,6 @@ func place_mines(avoid_coords):
 			rdm_coord = Vector2i(randi_range(- rows/2, rows/2 - 1), randi_range(- cols/2, cols/2 - 1))
 		mines_position.append(rdm_coord)
 		
-	print(mines_position.size())
-		
 	for coords in mines_position:
 		erase_cell(DEFAULT_LAYER, coords)
 		set_cell(DEFAULT_LAYER, coords, TILE_SET_ID, CELL.unrevealed, 1)
@@ -138,8 +147,6 @@ func set_tile_cell(cell_coord: Vector2, cell_type: String):
 	set_cell(DEFAULT_LAYER, cell_coord, TILE_SET_ID, CELL[cell_type])
 
 func on_cell_clicked(cell_coord: Vector2i):
-	print(cell_coord)
-	
 	if _first_reveal:
 		_first_reveal = false
 		place_mines(cell_coord)
